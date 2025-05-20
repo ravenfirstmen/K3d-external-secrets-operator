@@ -1,0 +1,134 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: flux-system
+  labels:
+    name: flux-system
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: cluster-fluxcd
+  namespace: flux-system
+spec:
+  repo: https://fluxcd-community.github.io/helm-charts
+  chart: flux2
+  version: 2.15.0
+  targetNamespace: flux-system
+  createNamespace: true  
+  valuesContent: |-
+    notificationController:
+      create: true
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+        requests:
+          cpu: 100m
+          memory: 64Mi
+      serviceaccount:
+        create: true
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        effect: NoSchedule
+        value: infra
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: cluster/nodegroup
+                operator: In
+                values:
+                - infra
+
+    kustomizeController:
+      create: true
+      envFrom:
+        secret:
+          name: "aws-creds"
+
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+        requests:
+          cpu: 100m
+          memory: 64Mi
+      serviceaccount:
+        create: true
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        effect: NoSchedule
+        value: infra
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: cluster/nodegroup
+                operator: In
+                values:
+                - infra
+
+
+    sourceController:
+      create: true
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+        requests:
+          cpu: 100m
+          memory: 64Mi
+      serviceaccount:
+        create: true
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        effect: NoSchedule
+        value: infra
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: cluster/nodegroup
+                operator: In
+                values:
+                - infra
+
+    policies:
+      create: true
+
+    prometheus:
+      podMonitor:
+        create: false
+
+    multitenancy:
+      enabled: true
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sops-aws-creds
+  namespace: flux-system
+stringData:
+  sops.aws-kms: |
+    aws_access_key_id: fakekeyid
+    aws_secret_access_key: fakeaccesskey
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-creds
+  namespace: flux-system
+stringData:
+  AWS_ACCESS_KEY_ID: fakekeyid
+  AWS_SECRET_ACCESS_KEY: fakeaccesskey
+  AWS_SESSION_TOKEN: ""
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_ENDPOINT_URL: "http://localstack.localstack.svc.cluster.local:4566"

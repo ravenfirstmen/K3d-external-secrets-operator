@@ -1,0 +1,74 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: netshoot
+  namespace: external-secrets
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: external-secrets
+rules:
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["csinodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: netshoot-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: netshoot
+    namespace: external-secrets
+roleRef:
+  kind: ClusterRole
+  name: external-secrets
+  apiGroup: rbac.authorization.k8s.io
+---          
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: netshoot
+  name: netshoot
+  namespace: external-secrets
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netshoot
+  template:
+    metadata:
+      labels:
+        app: netshoot
+      annotations:
+        secret.reloader.stakater.com/reload: "ssm-aws-param"
+        
+    spec:
+      serviceAccountName: "netshoot"
+      containers:
+        - name: netshoot
+          image: nicolaka/netshoot
+          command: ["/bin/bash"]
+          args: ["-c", "while true; do ping localhost; sleep 60;done"]
+          volumeMounts:
+            - name: param-secret
+              mountPath: "/mnt/param-secret"
+              readOnly: true        
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
+      volumes:
+      - name: param-secret
+        secret:
+          secretName: ssm-aws-param

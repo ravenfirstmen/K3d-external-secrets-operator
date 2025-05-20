@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: external-secrets
+  labels:
+    name: external-secrets
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: awssm-secret
+  namespace: external-secrets
+stringData:
+  AWS_ACCESS_KEY_ID: fakekeyid
+  AWS_SECRET_ACCESS_KEY: fakeaccesskey
+---    
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-settings
+  namespace: external-secrets
+data:
+  AWS_DEFAULT_REGION: "us-east-1"
+  AWS_SECRETSMANAGER_ENDPOINT: "http://localstack.localstack.svc.cluster.local:4566"
+  AWS_STS_ENDPOINT: "http://localstack.localstack.svc.cluster.local:4566"
+  AWS_SSM_ENDPOINT: "http://localstack.localstack.svc.cluster.local:4566"  
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: external-secrets
+  namespace: flux-system
+spec:
+  repo: https://charts.external-secrets.io
+  chart: external-secrets
+  version: 0.17.0
+  targetNamespace: external-secrets
+  createNamespace: true  
+  valuesContent: |-
+    extraEnv:
+      - name: AWS_DEFAULT_REGION
+        valueFrom:
+          configMapKeyRef:
+            name: cluster-settings
+            key: AWS_DEFAULT_REGION
+      - name: AWS_SECRETSMANAGER_ENDPOINT
+        valueFrom:
+          configMapKeyRef:
+            name: cluster-settings
+            key: AWS_SECRETSMANAGER_ENDPOINT
+      - name: AWS_STS_ENDPOINT
+        valueFrom:
+          configMapKeyRef:
+            name: cluster-settings
+            key: AWS_STS_ENDPOINT
+      - name: AWS_SSM_ENDPOINT
+        valueFrom:
+          configMapKeyRef:
+            name: cluster-settings
+            key: AWS_SSM_ENDPOINT
