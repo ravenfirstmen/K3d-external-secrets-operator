@@ -26,14 +26,14 @@ This project provides a setup for running [External Secrets Operator](https://ex
 2. **Test a sample:**
     ```sh
     cd validate
-    ./00-create-param.sh           
+    ./00-create-aws-secrets.sh           
     ./01-config-secrets-stores.sh
     ./02-config-external-secret.sh      
     ./03-deploy-netshoot.sh  
     # open a shell inside netshoot and read the value of /mnt/param-secret/thhe-value
     
     # update the value
-    ./04-update-param.sh 
+    ./04-update-aws-secrets.sh
     # the pod should be restarted
     # open a shell inside netshoot and read the value of /mnt/param-secret/thhe-value
 
