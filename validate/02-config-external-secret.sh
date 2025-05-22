@@ -7,17 +7,39 @@ cat <<EOT | ${KUBECTL_CMD} apply -f -
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: parameterstore
+  name: parameter-store
   namespace: external-secrets
 spec:
   refreshInterval: 1m
   secretStoreRef:
-    name: parameterstore
+    name: parameter-store
     kind: SecretStore
   target:
-    name: ssm-aws-param
+    name: aws-ssm-param
   data:
   - secretKey: the-value
     remoteRef:
       key: MySSMParam
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: secrets-manager
+  namespace: external-secrets
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    name: secrets-manager
+    kind: SecretStore
+  target:
+    name: aws-secret
+  data:
+  - secretKey: current-value
+    remoteRef:
+      key: MySMSecret
+      version: AWSCURRENT
+  - secretKey: previous-value
+    remoteRef:
+      key: MySMSecret
+      version: AWSPREVIOUS
 EOT

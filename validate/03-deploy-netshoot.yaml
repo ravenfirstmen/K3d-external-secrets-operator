@@ -57,8 +57,11 @@ spec:
           command: ["/bin/bash"]
           args: ["-c", "while true; do ping localhost; sleep 60;done"]
           volumeMounts:
-            - name: param-secret
-              mountPath: "/mnt/param-secret"
+            - name: param-store
+              mountPath: "/mnt/param-store"
+              readOnly: true        
+            - name: secrets-manager
+              mountPath: "/mnt/aws-secret"
               readOnly: true        
           resources:
             requests:
@@ -69,6 +72,9 @@ spec:
               memory: 512Mi
 
       volumes:
-      - name: param-secret
+      - name: param-store
         secret:
-          secretName: ssm-aws-param
+          secretName: aws-ssm-param
+      - name: secrets-manager
+        secret:
+          secretName: aws-secret
