@@ -47,7 +47,7 @@ spec:
       labels:
         app: netshoot
       annotations:
-        secret.reloader.stakater.com/reload: "ssm-aws-param"
+        secret.reloader.stakater.com/reload: "aws-secret"
         
     spec:
       serviceAccountName: "netshoot"
