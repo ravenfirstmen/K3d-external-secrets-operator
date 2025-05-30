@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$(dirname "$(readlink -f "$0")")"/../_local_vars.sh
+source "$(dirname "$(readlink -f "$0")")"/../../_local_vars.sh
 
 ${AWS_CMD} secretsmanager create-secret --name MySMSecret --secret-string 'My$uperS3cret' --no-cli-pager
 # force a rotation
