@@ -21,7 +21,23 @@ This project provides a setup for running [External Secrets Operator](https://ex
     ./start-cluster.sh
     ```
 
-2. **Test a sample:**
+2. **Ensure localstack profile is configured:**
+    ```
+    cat<<EOT >> .aws/config
+    [profile localstack]
+    region = us-east-1
+    output = json
+    endpoint_url = http://localhost:4566
+    EOT
+    
+    cat<<EOT >> .aws/credentials
+    [localstack]
+    aws_access_key_id = fakekeyid
+    aws_secret_access_key = fakeaccesskey
+    EOT
+    ```
+
+3. **Test a sample:**
     ```sh
     cd validate/aws-validation
     ./00-create-aws-secrets.sh           
@@ -37,7 +53,7 @@ This project provides a setup for running [External Secrets Operator](https://ex
 
     ```
 
-3. **Test a rotation:**
+4. **Test a rotation:**
     ```sh
     cd validate/secret-rotation
     ./00-secret-store.sh
@@ -49,7 +65,7 @@ This project provides a setup for running [External Secrets Operator](https://ex
     # keep execution ./99-read-local-secret.sh and see the secrets rotating
 
     ```
-3. **Shutdown k3d cluster:**
+5. **Shutdown k3d cluster:**
     ```sh
     ./stop-cluster.sh
     ```
