@@ -10,7 +10,7 @@ CLUSTER_NAME="k3s-default"
 
 KUBECTL_CMD=${KUBECTL_CMD:-"kubectl --context k3d-${CLUSTER_NAME}"}
 HELM_CMD=${HELM_CMD:-"helm --kube-context k3d-${CLUSTER_NAME}"}
-AWS_CMD=${AWS_CMD:-"aws --endpoint-url=http://localhost:4566 --profile localstack"}
+AWS_CMD=${AWS_CMD:-"aws --endpoint-url=http://localhost:4566 --profile ministack"}
 
 REGISTRY=${REGISTRY:-"k3d-registry.localhost:5000"}
 

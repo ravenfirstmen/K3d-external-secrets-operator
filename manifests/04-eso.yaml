@@ -12,8 +12,8 @@ metadata:
   name: awssm-secret
   namespace: external-secrets
 stringData:
-  AWS_ACCESS_KEY_ID: fakekeyid
-  AWS_SECRET_ACCESS_KEY: fakeaccesskey
+  AWS_ACCESS_KEY_ID: "000000000000"
+  AWS_SECRET_ACCESS_KEY: "test"
 ---    
 apiVersion: v1
 kind: ConfigMap
@@ -22,9 +22,9 @@ metadata:
   namespace: external-secrets
 data:
   AWS_DEFAULT_REGION: "us-east-1"
-  AWS_SECRETSMANAGER_ENDPOINT: "http://localstack.localstack.svc.cluster.local:4566"
-  AWS_STS_ENDPOINT: "http://localstack.localstack.svc.cluster.local:4566"
-  AWS_SSM_ENDPOINT: "http://localstack.localstack.svc.cluster.local:4566"  
+  AWS_SECRETSMANAGER_ENDPOINT: "http://ministack.ministack.svc.cluster.local:4566"
+  AWS_STS_ENDPOINT: "http://ministack.ministack.svc.cluster.local:4566"
+  AWS_SSM_ENDPOINT: "http://ministack.ministack.svc.cluster.local:4566"  
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart

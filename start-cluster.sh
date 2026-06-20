@@ -30,7 +30,7 @@ k3d cluster create "${CLUSTER_NAME}" \
     --port "3000:3000@loadbalancer" \
     --port "3100:3100@loadbalancer" \
     --port "4566:4566@loadbalancer" \
-    --servers 3 \
+    --servers 1 \
     --agents 1 \
     --wait \
     --k3s-arg '--disable=metrics-server@server:*' \
@@ -39,4 +39,4 @@ k3d cluster create "${CLUSTER_NAME}" \
     --k3s-node-label 'cluster/nodegroup=infra@server:*' \
     --k3s-node-label 'cluster/nodegroup=jobs@agent:*'
 
-# kubectl rollout status deployment localstack -n localstack --timeout=240s > /dev/null 2>&1
+# kubectl rollout status deployment ministack -n ministack --timeout=240s > /dev/null 2>&1

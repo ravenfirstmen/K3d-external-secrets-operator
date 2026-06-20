@@ -127,8 +127,8 @@ metadata:
   namespace: flux-system
 stringData:
   sops.aws-kms: |
-    aws_access_key_id: fakekeyid
-    aws_secret_access_key: fakeaccesskey
+    aws_access_key_id: 000000000000
+    aws_secret_access_key: test
 ---
 apiVersion: v1
 kind: Secret
@@ -136,8 +136,8 @@ metadata:
   name: aws-creds
   namespace: flux-system
 stringData:
-  AWS_ACCESS_KEY_ID: fakekeyid
-  AWS_SECRET_ACCESS_KEY: fakeaccesskey
+  AWS_ACCESS_KEY_ID: "000000000000"
+  AWS_SECRET_ACCESS_KEY: "test"  
   AWS_SESSION_TOKEN: ""
   AWS_DEFAULT_REGION: us-east-1
-  AWS_ENDPOINT_URL: "http://localstack.localstack.svc.cluster.local:4566"
+  AWS_ENDPOINT_URL: "http://ministack.ministack.svc.cluster.local:4566"

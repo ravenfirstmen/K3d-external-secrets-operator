@@ -6,7 +6,7 @@ This project provides a setup for running [External Secrets Operator](https://ex
 
 - Local Kubernetes cluster using k3d
 - Automated deployment of External Secrets Operator
-- Example configuration for syncing secrets using [localstack](https://www.localstack.cloud/)
+- Example configuration for syncing secrets using [ministack](https://ministack.org/)
 - Use of stakater for pod restart on secrets changes
 
 ## Prerequisites
@@ -21,19 +21,19 @@ This project provides a setup for running [External Secrets Operator](https://ex
     ./start-cluster.sh
     ```
 
-2. **Ensure localstack profile is configured:**
+2. **Ensure ministack profile is configured:**
     ```
     cat<<EOT >> .aws/config
-    [profile localstack]
+    [profile ministack]
     region = us-east-1
     output = json
     endpoint_url = http://localhost:4566
     EOT
     
     cat<<EOT >> .aws/credentials
-    [localstack]
-    aws_access_key_id = fakekeyid
-    aws_secret_access_key = fakeaccesskey
+    [ministack]
+    aws_access_key_id = 000000000000
+    aws_secret_access_key = test
     EOT
     ```
 

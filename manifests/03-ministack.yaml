@@ -1,0 +1,98 @@
+# docker run -p 4566:4566 ministackorg/ministack:full
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ministack
+  labels:
+    name: ministack   
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ms-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: local-path
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data-ms"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ms-pv-claim
+  namespace: ministack
+spec:
+  storageClassName: local-path
+  volumeName: ms-pv-volume
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ministack-credentials
+  namespace: ministack
+stringData:
+  AWS_ACCESS_KEY_ID: "000000000000"
+  AWS_SECRET_ACCESS_KEY: "test"
+  profile: |-
+    [default]
+    aws_access_key_id = 000000000000
+    aws_secret_access_key = test   
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ministack-settings
+  namespace: ministack
+data:
+  AWS_REGION: us-east-1
+  AWS_ENDPOINT_URL: http://ministack.ministack.svc.cluster.local:4566      
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ministack
+  name: ministack
+  namespace: ministack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ministack
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: ministack
+    spec:
+      containers:
+      - image: ministackorg/ministack:full
+        name: ministack
+        ports:
+        - containerPort: 4566
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ministack
+  namespace: ministack
+spec:
+  selector:
+    app: ministack
+  ports:
+    - protocol: TCP
+      port: 4566
+      targetPort: 4566
+  type: LoadBalancer
